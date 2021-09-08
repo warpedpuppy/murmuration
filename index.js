@@ -1,39 +1,21 @@
-// HTML CSS JSResult Skip Results Iframe
+
 var Birds = function() {
-    var esto = this;
 
-    var config = {
-        number: 700
-    };
+    let esto = this,
+        config = {number: 700},
+        width,
+        height,
+        canvas,
+        engine,
+        birds,
+        frame = 0,
+        speed = 1.4,
+        birdLineCount = 5,
+        birdLineIndex = -1,
+        z = {current: 1, target: 1},
+        mouse = { x: 0.5, y: 0.5, z: 0.5};
 
-    var width;
-    var height;
-
-    var canvas;
-    var engine;
-
-    var birds;
-    var frame = 0;
-
-    var speed = 1.4;
-    var birdLineCount = 5;
-    var birdLineIndex = -1;
-
-    var bgTop;
-    var bgBot;
-
-    var z = {
-        current: 1,
-        target: 1
-    };
-
-    var mouse = {
-        x: 0.5,
-        y: 0.5,
-        z: 0.5
-    };
-
-    var prepare = function() {
+    const prepare = function() {
         canvas = document.getElementsByTagName('canvas')[0];
         engine = canvas.getContext('2d');
 
@@ -42,14 +24,6 @@ var Birds = function() {
 
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
-
-        bgTop = engine.createLinearGradient(0, 0, 0, height / 2);
-        bgTop.addColorStop(0, '#000');
-        bgTop.addColorStop(1, '#110');
-
-        bgBot = engine.createLinearGradient(0, height / 2, 0, height);
-        bgBot.addColorStop(0, '#000');
-        bgBot.addColorStop(1, '#001');
 
     };
 
@@ -61,11 +35,11 @@ var Birds = function() {
         canvas.setAttribute('height', height);
     })
 
-    var request = function() {
+    const request = function() {
         window.requestAnimationFrame(tick);
     };
 
-    var solveBirdMove = function(bird) {
+    const solveBirdMove = function(bird) {
         ['x', 'y', 'z'].forEach(function(key) {
             if (Math.abs(bird.move[key]) > 0.003) {
                 bird.move[key] *= 0.99;
@@ -82,7 +56,7 @@ var Birds = function() {
         bird.move.z += speed * (mouse.z - bird.pos.z) * bird.speed;
     };
 
-    var applyPath = function(pathStack) {
+    const applyPath = function(pathStack) {
         engine.moveTo(pathStack[0].x, pathStack[0].y);
 
         for (var i = 1; i < pathStack.length; i++) {
@@ -90,7 +64,7 @@ var Birds = function() {
         }
     };
 
-    var drawBird = function(bird) {
+    const drawBird = function(bird) {
         engine.fillStyle = 'rgba(0,0,0,.3)';
 
         var pos = {
@@ -157,12 +131,12 @@ var Birds = function() {
 
     };
 
-    var addLinePath = function(bird, pos) {
+    const addLinePath = function(bird, pos) {
         bird.lines[birdLineIndex * 2] = pos.x;
         bird.lines[birdLineIndex * 2 + 1] = pos.y;
     };
 
-    var renderBirds = function() {
+    const renderBirds = function() {
         birds.forEach(function(bird) {
             solveBirdMove(bird);
             bird.wing += 0.1 + bird.wingAdd * 0.3 * speed;
@@ -178,11 +152,11 @@ var Birds = function() {
         });
     };
 
-    var clear = function() {
+    const clear = function() {
         engine.clearRect(0, 0, width, height);
     };
 
-    var drawBg = function() {
+    const drawBg = function() {
         engine.fillStyle = bgTop;
         engine.fillRect(0, 0, width, height / 2);
 
@@ -190,7 +164,7 @@ var Birds = function() {
         engine.fillRect(0, height / 2, width, height);
     };
 
-    var tick = function() {
+    const tick = function() {
         frame++;
         z.current += (z.target - z.current) / 100;
         clear();
@@ -198,7 +172,7 @@ var Birds = function() {
         request();
     };
 
-    var createBirds = function() {
+    const createBirds = function() {
         birds = [];
 
         for (var i = 0; i < config.number; i++) {
@@ -252,7 +226,3 @@ var Birds = function() {
 
 var b = new Birds();
 b.run();
-
-
-
-// Resources1× 0.5× 0.25×Rerun
