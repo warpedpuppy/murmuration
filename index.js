@@ -89,7 +89,9 @@ var Birds = function() {
             // engine.lineTo(pathStack[i].x, pathStack[i].y);
         }
     };
-
+    const deg2rad = function (degree) {
+        return degree * (Math.PI / 180)
+      }
     const drawBird = function(bird, i) {
         // engine.fillStyle = 'rgba(0,0,0,.3)';
 
@@ -118,6 +120,7 @@ var Birds = function() {
         birdGraphics[i].x = pos.x;
         birdGraphics[i].y = pos.y;
         birdGraphics[i].flap();
+        // birdGraphics[i].rotation = deg2rad(atan)
 
         applyPath([
             p(0, 1.2),
