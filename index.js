@@ -1,12 +1,38 @@
 
+
 var Birds = function() {
 
+    const app = new PIXI.Application({
+        width: window.innerWidth, height: window.innerHeight, backgroundAlpha: 0, resolution: window.devicePixelRatio || 1,
+    });
+
+    document.querySelector("#canvas-shell").appendChild(app.view);
+
+
+    
+    const container = new PIXI.ParticleContainer(),
+          texture = PIXI.Texture.from("bmps/bird1.png"),
+          secondTexture = PIXI.Texture.from("bmps/bird2.png"),
+          birdGraphics = [];
+
+    app.stage.addChild(container)
+
+    app.ticker.add(() => {
+        frame++;
+        z.current += (z.target - z.current) / 100;
+        clear();
+        renderBirds();
+        request();
+    });
+
+    
+
     let esto = this,
-        config = {number: 700},
+        config = {number: 2000},
         width,
         height,
         canvas,
-        engine,
+        // engine,
         birds,
         frame = 0,
         speed = 1.4,
@@ -17,7 +43,7 @@ var Birds = function() {
 
     const prepare = function() {
         canvas = document.getElementsByTagName('canvas')[0];
-        engine = canvas.getContext('2d');
+        // engine = canvas.getContext('2d');
 
         width = window.innerWidth;
         height = window.innerHeight;
@@ -57,15 +83,15 @@ var Birds = function() {
     };
 
     const applyPath = function(pathStack) {
-        engine.moveTo(pathStack[0].x, pathStack[0].y);
+        // engine.moveTo(pathStack[0].x, pathStack[0].y);
 
         for (var i = 1; i < pathStack.length; i++) {
-            engine.lineTo(pathStack[i].x, pathStack[i].y);
+            // engine.lineTo(pathStack[i].x, pathStack[i].y);
         }
     };
 
-    const drawBird = function(bird) {
-        engine.fillStyle = 'rgba(0,0,0,.3)';
+    const drawBird = function(bird, i) {
+        // engine.fillStyle = 'rgba(0,0,0,.3)';
 
         var pos = {
             x: bird.pos.x * width,
@@ -76,7 +102,7 @@ var Birds = function() {
         var size = (width + height) / 200 * pos.z * z.current;
         var atan = Math.atan2(bird.move.y * height, bird.move.x * width);
 
-        engine.lineWidth = 1;
+        // engine.lineWidth = 1;
 
         var p = function(rad, customSize) {
             return {
@@ -87,7 +113,11 @@ var Birds = function() {
 
         addLinePath(bird, p(0.5, 1.3));
 
-        engine.beginPath();
+        // engine.beginPath();
+
+        birdGraphics[i].x = pos.x;
+        birdGraphics[i].y = pos.y;
+        birdGraphics[i].flap();
 
         applyPath([
             p(0, 1.2),
@@ -108,13 +138,13 @@ var Birds = function() {
             p(0, 1.2)
         ]);
 
-        engine.fill();
+        // engine.fill();
 
         var wingWave = Math.sin(bird.wing);
         var wingAdd = wingWave * 0.1;
         var wingPositiveWave = (wingWave + 1) / 2;
 
-        engine.beginPath();
+        // engine.beginPath();
 
         //wings
         applyPath([
@@ -127,7 +157,7 @@ var Birds = function() {
             p(0, 0)
         ]);
 
-        engine.fill();
+        // engine.fill();
 
     };
 
@@ -147,35 +177,41 @@ var Birds = function() {
 
         birdLineIndex = (birdLineIndex + 1) % birdLineCount;
 
-        birds.forEach(function(bird) {
-            drawBird(bird);
+        birds.forEach(function(bird, i) {
+            drawBird(bird, i);
         });
     };
 
     const clear = function() {
-        engine.clearRect(0, 0, width, height);
+        // // engine.clearRect(0, 0, width, height);
     };
 
-    const drawBg = function() {
-        engine.fillStyle = bgTop;
-        engine.fillRect(0, 0, width, height / 2);
 
-        engine.fillStyle = bgBot;
-        engine.fillRect(0, height / 2, width, height);
-    };
 
     const tick = function() {
-        frame++;
-        z.current += (z.target - z.current) / 100;
-        clear();
-        renderBirds();
-        request();
+       
     };
 
     const createBirds = function() {
         birds = [];
 
         for (var i = 0; i < config.number; i++) {
+            let b = new PIXI.Sprite(texture);
+            b.alpha = 0.3;
+            b.wingVal = 1;
+            b.flap = function () {
+                if(Math.random() * 100 < 50) {
+                    if (this.wingVal === 1) {
+                        this.texture = secondTexture;
+                        this.wingVal = 2;
+                    } else {
+                        this.texture = texture;
+                        this.wingVal = 1;
+                    }
+                }
+            }
+            birdGraphics.push(b)
+            container.addChild(b)
             birds.push({
                 wing: Math.random(),
                 wingAdd: Math.random(),
